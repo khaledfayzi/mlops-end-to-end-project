@@ -1,0 +1,28 @@
+2026-02-13 23:46:37,556 | INFO | Starting training
+2026-02-13 23:46:37,574 | INFO | Git commit: 2c2c9d33b4dc02198582507064055f0bb89d88c3
+2026-02-13 23:46:37,574 | INFO | Args: {'epochs': 2, 'batch_size': 16, 'learning_rate': 0.0001, 'model_name': 'resnet18', 'img_size': 224, 'val_ratio': 0.2, 'freeze_backbone': True}
+2026-02-13 23:46:37,574 | INFO | Device: cpu
+2026-02-13 23:46:38,018 | INFO | Dataset size (valid image + target): 3684
+2026-02-13 23:46:38,173 | INFO | Backbone frozen: training only final head (fc)
+2026-02-13 23:47:56,226 | INFO | Epoch 1/2 | train MSE: 0.130448 | val MSE: 0.100382
+2026-02-13 23:47:56,288 | INFO | Saved best model to: /Users/khaledfayzi/Documents/MLOps/mlops-end-to-end-project/lab-01-end-to-end-training/results/best_resnet18.pt
+2026-02-13 23:49:34,997 | INFO | Epoch 2/2 | train MSE: 0.090643 | val MSE: 0.085938
+2026-02-13 23:49:35,046 | INFO | Saved best model to: /Users/khaledfayzi/Documents/MLOps/mlops-end-to-end-project/lab-01-end-to-end-training/results/best_resnet18.pt
+2026-02-13 23:49:35,046 | INFO | Done. Best val MSE: 0.085938 | Time: 176.9s
+2026-02-13 23:50:26,110 | INFO | Starting training
+2026-02-13 23:50:26,134 | INFO | Git commit: 2c2c9d33b4dc02198582507064055f0bb89d88c3
+2026-02-13 23:50:26,134 | INFO | Args: {'epochs': 5, 'batch_size': 16, 'learning_rate': 0.0001, 'model_name': 'resnet18', 'img_size': 224, 'val_ratio': 0.2, 'freeze_backbone': True}
+2026-02-13 23:50:26,134 | INFO | Device: cpu
+2026-02-13 23:50:26,562 | INFO | Dataset size (valid image + target): 3684
+2026-02-13 23:50:26,732 | INFO | Backbone frozen: training only final head (fc)
+2026-02-13 23:51:54,317 | INFO | Epoch 1/5 | train MSE: 0.142425 | val MSE: 0.126213
+2026-02-13 23:51:54,371 | INFO | Saved best model to: /Users/khaledfayzi/Documents/MLOps/mlops-end-to-end-project/lab-01-end-to-end-training/results/best_resnet18.pt
+2026-02-13 23:53:18,287 | INFO | Epoch 2/5 | train MSE: 0.094724 | val MSE: 0.085655
+2026-02-13 23:53:18,347 | INFO | Saved best model to: /Users/khaledfayzi/Documents/MLOps/mlops-end-to-end-project/lab-01-end-to-end-training/results/best_resnet18.pt
+2026-02-13 23:54:47,459 | INFO | Epoch 3/5 | train MSE: 0.078726 | val MSE: 0.074106
+2026-02-13 23:54:47,518 | INFO | Saved best model to: /Users/khaledfayzi/Documents/MLOps/mlops-end-to-end-project/lab-01-end-to-end-training/results/best_resnet18.pt
+2026-02-13 23:56:15,157 | INFO | Epoch 4/5 | train MSE: 0.069180 | val MSE: 0.065837
+2026-02-13 23:56:15,232 | INFO | Saved best model to: /Users/khaledfayzi/Documents/MLOps/mlops-end-to-end-project/lab-01-end-to-end-training/results/best_resnet18.pt
+2026-02-13 23:58:00,485 | INFO | Epoch 5/5 | train MSE: 0.063483 | val MSE: 0.061038
+2026-02-13 23:58:00,547 | INFO | Saved best model to: /Users/khaledfayzi/Documents/MLOps/mlops-end-to-end-project/lab-01-end-to-end-training/results/best_resnet18.pt
+2026-02-13 23:58:00,547 | INFO | Done. Best val MSE: 0.061038 | Time: 453.8s

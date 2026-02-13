@@ -14,7 +14,7 @@ from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
-
+import seaborn as sns
 
 # -----------------------------
 # 1) Paths (where files are)
@@ -101,3 +101,56 @@ plt.savefig(FIGURES_DIR / "sample_images.png")
 plt.close()
 
 print("Saved: figures/sample_images.png")
+
+
+# Plot 3: Correlation Heatmap (numeric features)
+numeric_cols = df.select_dtypes(include=["number"]).columns
+corr = df[numeric_cols].corr()
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(corr, cmap="coolwarm")
+plt.title("Correlation Heatmap (Numeric Features)")
+plt.tight_layout()
+plt.savefig(FIGURES_DIR / "correlation_heatmap.png")
+plt.close()
+
+print("Saved: figures/correlation_heatmap.png")
+
+
+# Plot 4: Biomass vs age_days (scatter)
+df_age = df.dropna(subset=["age_days", "fresh_weight_total"])
+
+plt.figure(figsize=(6, 4))
+plt.scatter(df_age["age_days"], df_age["fresh_weight_total"], alpha=0.4)
+plt.title("Biomass vs Age (days)")
+plt.xlabel("age_days")
+plt.ylabel("fresh_weight_total (grams)")
+plt.tight_layout()
+plt.savefig(FIGURES_DIR / "age_vs_biomass.png")
+plt.close()
+
+print("Saved: figures/age_vs_biomass.png")
+
+import numpy as np
+
+# Plot 5: Image pixel analysis (mean brightness)
+df_imgs = df.dropna(subset=["filename"]).sample(n=50, random_state=42)
+
+means = []
+for _, row in df_imgs.iterrows():
+    img_path = IMAGES_DIR / str(row["filename"])
+    if not img_path.exists():
+        continue
+    img = np.array(Image.open(img_path).convert("RGB"))
+    means.append(img.mean())
+
+plt.figure(figsize=(6, 4))
+plt.hist(means, bins=20)
+plt.title("Mean Pixel Intensity (Sample Images)")
+plt.xlabel("Mean Pixel Value")
+plt.ylabel("Count")
+plt.tight_layout()
+plt.savefig(FIGURES_DIR / "image_pixel_analysis.png")
+plt.close()
+
+print("Saved: figures/image_pixel_analysis.png")

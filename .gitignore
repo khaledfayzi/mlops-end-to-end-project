@@ -1,7 +1,11 @@
 .DS_Store
-.DS_Store
 __pycache__/
 *.pyc
 .venv/
 env/
 .vscode/
+*.pyc
+results/model.pt
+mlflow.db
+.tmp_dagster_home*/
+dagster_home/

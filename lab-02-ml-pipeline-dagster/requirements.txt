@@ -1,0 +1,11 @@
+dagster
+dagster-webserver
+dagster-mlflow
+mlflow
+torch
+torchvision
+pandas
+openpyxl
+matplotlib
+pillow
+numpy

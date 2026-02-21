@@ -1,0 +1,26 @@
+# Core MLOps
+dagster
+dagster-webserver
+dagster-mlflow
+mlflow
+
+# ML / DL
+torch
+torchvision
+pandas
+numpy
+matplotlib
+Pillow
+
+# Serving / UI
+gradio
+
+# Monitoring / Drift
+evidently
+
+# Optional (falls ihr es nutzt)
+scikit-learn
+
+openpyxl
+
+evidently

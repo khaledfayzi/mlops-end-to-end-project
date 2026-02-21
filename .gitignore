@@ -1,11 +1,39 @@
-.DS_Store
+# Python
 __pycache__/
 *.pyc
 .venv/
-env/
-.vscode/
-*.pyc
-results/model.pt
+venv/
+
+# Data (nicht committen)
+data/
+dataset/
+datasets/
+images/
+*.xlsx
+*.csv
+
+# MLflow / Dagster artifacts
+mlruns/
 mlflow.db
-.tmp_dagster_home*/
 dagster_home/
+.dagster/
+
+# Generated / logs / outputs
+production_data/
+production_data_measured/
+*.log
+training.log
+
+# Model artifacts
+*.pt
+*.pth
+*.pkl
+*.onnx
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Gradio temp files
+.gradio/

@@ -1,8 +1,0 @@
-pandas
-matplotlib
-seaborn
-pillow
-openpyxl
-numpy
-torch
-torchvision

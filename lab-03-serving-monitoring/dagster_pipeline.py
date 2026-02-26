@@ -27,14 +27,16 @@ import numpy as np
 from PIL import Image
 
 
-from evidently import Report
+
 from evidently.presets import DataDriftPreset
 from dagster import MetadataValue
 
 
 BASE_DIR = Path(__file__).resolve().parent
+ROOT_DIR = BASE_DIR.parent  # mlops-end-to-end-project/
 
-DATA_DIR = BASE_DIR.parent / "lab-01-end-to-end-training" / "data"
+# Default: <repo_root>/data  (kann per ENV überschrieben werden)
+DATA_DIR = Path(os.getenv("DATA_DIR", ROOT_DIR / "data"))
 META_PATH = DATA_DIR / "digital_biomass_labels.xlsx"
 IMAGES_DIR = DATA_DIR / "images_med_res"
 
@@ -121,6 +123,7 @@ def production_mean_pixel(context: AssetExecutionContext):
 #Das Asset ist dein „Alarm“, der sagt: Die neuen Bilder sind anders als früher (Drift)
 @asset
 def drift_report(context: AssetExecutionContext, reference_mean_pixel: pd.DataFrame, production_mean_pixel: pd.DataFrame):
+    from evidently import Report
     # Wenn production leer: kein Drift möglich
     if len(production_mean_pixel) == 0:
         context.log.warning("Production dataset empty → drift report not generated. Upload images in Gradio first.")

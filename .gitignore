@@ -3,6 +3,10 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+*.py[cod]
+*.pyo
+*.pyd
+.env
 
 # Data (nicht committen)
 data/
@@ -17,6 +21,9 @@ mlruns/
 mlflow.db
 dagster_home/
 .dagster/
+*.db-journal
+.tmp_dagster_home_*/
+
 
 # Generated / logs / outputs
 production_data/
@@ -25,7 +32,6 @@ production_data_measured/
 training.log
 
 # Model artifacts
-*.pt
 *.pth
 *.pkl
 *.onnx
@@ -37,3 +43,9 @@ training.log
 
 # Gradio temp files
 .gradio/
+
+
+
+
+# Jupyter
+.ipynb_checkpoints/

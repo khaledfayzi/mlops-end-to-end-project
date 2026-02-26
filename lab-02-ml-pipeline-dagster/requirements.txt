@@ -1,11 +1,26 @@
+# Core
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+Pillow
+
+# Deep Learning
+torch
+torchvision
+
+# MLOps
+mlflow
 dagster
 dagster-webserver
 dagster-mlflow
-mlflow
-torch
-torchvision
-pandas
+
+
+# Utils
+tqdm
+python-dotenv
+
 openpyxl
-matplotlib
-pillow
-numpy
+
+

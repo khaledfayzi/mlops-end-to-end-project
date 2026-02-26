@@ -10,17 +10,24 @@ import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 import mlflow
+from pathlib import Path
+import os
+
+
 
 from torch.utils.data import DataLoader
 from torchvision import transforms, models
 
-from dagster import asset, AssetExecutionContext, Definitions
+from dagster import asset, AssetExecutionContext, Definitions, Field
 from dagster_mlflow import mlflow_tracking
 from dataset import BiomassImageDataset, train_val_split
 
-BASE_DIR = Path(__file__).resolve().parent
 
-DATA_DIR = BASE_DIR.parent / "lab-01-end-to-end-training" / "data"
+
+BASE_DIR = Path(__file__).resolve().parent
+ROOT_DIR = BASE_DIR.parent  # mlops-end-to-end-project/
+
+DATA_DIR = Path(os.getenv("DATA_DIR", ROOT_DIR / "data"))
 META_PATH = DATA_DIR / "digital_biomass_labels.xlsx"
 IMAGES_DIR = DATA_DIR / "images_med_res"
 
@@ -66,7 +73,7 @@ def eda_plots(context: AssetExecutionContext, raw_dataset):
 
 
 
-@asset(config_schema={"batch_size": int})  
+@asset(config_schema={"batch_size":Field(int, default_value=16)})  
 def preprocessed_data(context: AssetExecutionContext, raw_dataset):
     df = raw_dataset["metadata"]
     images_dir = Path(raw_dataset["images_dir"])
@@ -96,14 +103,13 @@ def preprocessed_data(context: AssetExecutionContext, raw_dataset):
 
 
 
-@asset(required_resource_keys={"mlflow"}, config_schema={"epochs": int, "lr": float})  
+@asset(required_resource_keys={"mlflow"}, config_schema={"epochs":Field(int, default_value=5), "lr":Field(float, default_value=0.001)})
 def trained_model(context: AssetExecutionContext, preprocessed_data):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     context.log.info(f"Using device: {device}")
 
     train_loader = preprocessed_data["train_loader"]
     val_loader   = preprocessed_data["val_loader"]
-
 
     epochs = context.op_config["epochs"]
     lr = context.op_config["lr"]
@@ -116,83 +122,69 @@ def trained_model(context: AssetExecutionContext, preprocessed_data):
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)  
 
-    history = {
-        "train_mse": [],
-        "val_mse": [],
-        "val_mae": [],   
-        "val_rmse": [],  
-    }
-
-    # MLflow: Parameter loggen
-    mlflow.log_param("model_name", "resnet18")
-    mlflow.log_param("batch_size", train_loader.batch_size)  
-    mlflow.log_param("lr", lr)                               
-    mlflow.log_param("epochs", epochs)                       
-
-    
-    for epoch in range(epochs):
-
-        model.train()
-        train_sum, n_train = 0.0, 0
-
-        for x, y in train_loader:
-            x, y = x.to(device), y.to(device)
-            pred = model(x)
-            loss = criterion(pred, y)
-
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-            train_sum += loss.item()
-            n_train += 1
-
-        train_mse = train_sum / max(n_train, 1)
+    history = {"train_mse": [], "val_mse": [], "val_mae": [], "val_rmse": []}
 
 
-        model.eval()
+    with mlflow.start_run(run_name="dagster_training", nested=True):
+        mlflow.log_param("model_name", "resnet18")
+        mlflow.log_param("batch_size", train_loader.batch_size)
+        mlflow.log_param("lr", lr)
+        mlflow.log_param("epochs", epochs)
 
+        for epoch in range(epochs):
+            model.train()
+            train_sum, n_train = 0.0, 0
 
-        val_mse_sum, val_mae_sum, n_val = 0.0, 0.0, 0
-
-        with torch.no_grad():
-            for x, y in val_loader:
+            for x, y in train_loader:
                 x, y = x.to(device), y.to(device)
                 pred = model(x)
+                loss = criterion(pred, y)
 
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
 
-                mse = nn.functional.mse_loss(pred, y).item()
-                mae = nn.functional.l1_loss(pred, y).item()
+                train_sum += loss.item()
+                n_train += 1
 
-                val_mse_sum += mse
-                val_mae_sum += mae
-                n_val += 1
+            train_mse = train_sum / max(n_train, 1)
 
-        val_mse = val_mse_sum / max(n_val, 1)
-        val_mae = val_mae_sum / max(n_val, 1)
-        val_rmse = math.sqrt(val_mse)  
+            model.eval()
+            val_mse_sum, val_mae_sum, n_val = 0.0, 0.0, 0
+            with torch.no_grad():
+                for x, y in val_loader:
+                    x, y = x.to(device), y.to(device)
+                    pred = model(x)
 
-        history["train_mse"].append(train_mse)
-        history["val_mse"].append(val_mse)
-        history["val_mae"].append(val_mae)     
-        history["val_rmse"].append(val_rmse)   
+                    mse = nn.functional.mse_loss(pred, y).item()
+                    mae = nn.functional.l1_loss(pred, y).item()
+                    val_mse_sum += mse
+                    val_mae_sum += mae
+                    n_val += 1
 
+            val_mse = val_mse_sum / max(n_val, 1)
+            val_mae = val_mae_sum / max(n_val, 1)
+            val_rmse = math.sqrt(val_mse)
 
-        context.log.info(
-            f"Epoch {epoch+1}/{epochs}: train_mse={train_mse:.4f}, val_mse={val_mse:.4f}, "
-            f"val_mae={val_mae:.4f}, val_rmse={val_rmse:.4f}"
-        )
+            history["train_mse"].append(train_mse)
+            history["val_mse"].append(val_mse)
+            history["val_mae"].append(val_mae)
+            history["val_rmse"].append(val_rmse)
 
-        # MLflow Metriken loggen
-        mlflow.log_metric("train_mse", train_mse, step=epoch + 1)
-        mlflow.log_metric("val_mse", val_mse, step=epoch + 1)
-        mlflow.log_metric("val_mae", val_mae, step=epoch + 1)     
-        mlflow.log_metric("val_rmse", val_rmse, step=epoch + 1)   
+            context.log.info(
+                f"Epoch {epoch+1}/{epochs}: train_mse={train_mse:.4f}, "
+                f"val_mse={val_mse:.4f}, val_mae={val_mae:.4f}, val_rmse={val_rmse:.4f}"
+            )
 
-    model_path = RESULTS_DIR / "model.pt"
-    torch.save(model.state_dict(), model_path)
-    mlflow.log_artifact(str(model_path))
-    context.log.info(f"Saved model: {model_path}")
+            mlflow.log_metric("train_mse", train_mse, step=epoch + 1)
+            mlflow.log_metric("val_mse", val_mse, step=epoch + 1)
+            mlflow.log_metric("val_mae", val_mae, step=epoch + 1)
+            mlflow.log_metric("val_rmse", val_rmse, step=epoch + 1)
+
+        model_path = RESULTS_DIR / "model.pt"
+        torch.save(model.state_dict(), model_path)
+        mlflow.log_artifact(str(model_path))
+        context.log.info(f"Saved model: {model_path}")
 
     return {"model_path": str(model_path), "history": history}
 
@@ -202,7 +194,7 @@ def model_evaluation(context: AssetExecutionContext, trained_model, preprocessed
     device = "cuda" if torch.cuda.is_available() else "cpu"
     val_loader = preprocessed_data["val_loader"]
 
-    model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+    model = models.resnet18(weights=None)
     model.fc = nn.Linear(model.fc.in_features, 1)
     model.load_state_dict(torch.load(trained_model["model_path"], map_location=device))
     model = model.to(device)

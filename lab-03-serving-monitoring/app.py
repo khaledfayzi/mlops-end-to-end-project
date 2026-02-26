@@ -22,7 +22,8 @@ import csv
 from datetime import datetime
 from pathlib import Path
 
-DEFAULT_TRACKING_URI = "http://localhost:5000"
+BASE_DIR = Path(__file__).resolve().parent
+DEFAULT_TRACKING_URI = f"sqlite:///{(BASE_DIR / 'mlflow.db').as_posix()}"
 
 # Logging configuration
 LOG_DIR = Path("production_data")

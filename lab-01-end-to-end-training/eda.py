@@ -16,18 +16,32 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import seaborn as sns
 
+import argparse
+
 # -----------------------------
 # 1) Paths (where files are)
 # -----------------------------
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
+
+
+LAB_DIR = Path(__file__).resolve().parent
+ROOT_DIR = LAB_DIR.parent
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--data_dir",
+    type=str,
+    default=os.getenv("DATA_DIR", str(ROOT_DIR / "data")),
+    help="Pfad zum data/ Ordner (default: <repo_root>/data oder ENV DATA_DIR)",
+)
+args = parser.parse_args()
+
+DATA_DIR = Path(args.data_dir)
 IMAGES_DIR = DATA_DIR / "images_med_res"
 META_PATH = DATA_DIR / "digital_biomass_labels.xlsx"
 
-# Folder for plots (we save png files here)
-FIGURES_DIR = BASE_DIR / "figures"
+# Folder for plots
+FIGURES_DIR = LAB_DIR / "figures"
 FIGURES_DIR.mkdir(exist_ok=True)
-
 
 # -----------------------------
 # 2) Load metadata (Excel)

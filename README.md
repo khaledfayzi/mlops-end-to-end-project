@@ -1,21 +1,33 @@
-# 🚀 End-to-End MLOps Projekt: Training, Orchestrierung, Serving & Monitoring
+# 🚀 MLOps End-to-End Projekt – Plant Biomass Prediction
 
-Dieses Repository zeigt ein vollständiges End-to-End-MLOps-Projekt für eine bildbasierte Regressionsaufgabe (Vorhersage der Pflanzen-Biomasse).  
-Es deckt den gesamten ML-Lebenszyklus ab – von explorativer Datenanalyse (EDA) und Modelltraining über Pipeline-Orchestrierung bis hin zu Modell-Serving und Monitoring mit Data-Drift-Erkennung.
+Dieses Repository zeigt ein vollständiges, praxisnahes MLOps-Projekt:  
+Von **Datenanalyse & Modelltraining** über **Pipeline-Orchestrierung (Dagster + MLflow)**  
+bis hin zu **Modell-Serving und Drift-Monitoring**.
 
-Fokus: Produktionsnahe ML-Entwicklung & MLOps Best Practices  
-Tech-Stack: PyTorch, Dagster, MLflow, Gradio, Evidently
+Ziel ist es, ein professionelles End-to-End-Setup zu demonstrieren, wie es in realen MLOps-Umgebungen verwendet wird.
+
+---
+
+## 🎯 Projektziele
+
+- Aufbau einer reproduzierbaren ML-Pipeline  
+- Training eines CNN-Modells (ResNet18, PyTorch) zur Vorhersage von Pflanzenbiomasse  
+- Experiment-Tracking mit MLflow  
+- Orchestrierung der Pipeline mit Dagster  
+- Modell-Serving (Gradio)  
+- Daten-Drift-Monitoring mit Evidently  
 
 ---
 
 ## 📌 Projektstruktur
 
+```text
 mlops-end-to-end-project/
-├── data/                         # Zentraler Datenordner (Bilder + Labels)
-├── lab-01-end-to-end-training/   # EDA + Modelltraining (PyTorch)
+├── data/                         # Zentraler Datenordner (Bilder + Labels) – lokal, nicht im Repo
+├── lab-01-end-to-end-training/   # EDA + manuelles Modelltraining (PyTorch)
 ├── lab-02-ml-pipeline-dagster/   # Orchestrierte ML-Pipeline (Dagster + MLflow)
 ├── lab-03-serving-monitoring/    # Modell-Serving + Drift-Monitoring
-├── requirements.txt
+├── requirements.txt              # Abhängigkeiten (Core)
 └── README.md
 
 ---

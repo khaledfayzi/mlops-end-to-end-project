@@ -49,3 +49,7 @@ training.log
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Monitoring reports
+lab-03-serving-monitoring/results/
+*.html

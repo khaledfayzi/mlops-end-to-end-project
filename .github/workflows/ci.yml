@@ -1,0 +1,25 @@
+name: CI
+
+
+on : 
+    push:
+        branches: ["main"]
+    pull_request:
+jobs:
+    smoke-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Repository auschecken
+              uses: action/checkout@v4
+            - name: Python einrichten 
+              uses: action/setup-python@v5
+              with:
+                python-version: "3.12"
+            - name: Abhängigkeiten installieren
+              run:
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+            - name: Smoke Text
+              run:
+                python -c "import torch; import mlflow; import dagster; import gradio; print('Smoke test successful')
